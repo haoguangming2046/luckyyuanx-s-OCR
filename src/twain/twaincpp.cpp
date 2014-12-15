@@ -39,9 +39,8 @@ It should be called again if ReleaseTwain is called.
 
 */
 bool CTwain::InitTwain(HWND hWnd)
-{
- 
-char libName[512];
+{ 
+	char libName[512];
 	if(IsValidDriver()) 
 	{
 		return true;
@@ -56,7 +55,8 @@ char libName[512];
 	
 	m_hTwainDLL  = LoadLibraryA(libName);
 	if(m_hTwainDLL != NULL)
-	{  qWarning("valid driver");
+	{  	
+		//qWarning("valid driver");
 		if(!(m_pDSMProc = (DSMENTRYPROC)GetProcAddress(m_hTwainDLL,(LPCSTR)MAKEINTRESOURCE(1))))
 		{
 			FreeLibrary(m_hTwainDLL);
@@ -64,8 +64,7 @@ char libName[512];
 		}
 	}
 	if(IsValidDriver())
-	{
-	  
+	{	  
 		GetIdentity();
 		m_bDSMOpen= CallTwainProc(&m_AppId,NULL,DG_CONTROL,DAT_PARENT,MSG_OPENDSM,(TW_MEMREF)&m_hMessageWnd);
 		return true;
@@ -109,7 +108,7 @@ bool CTwain::CallTwainProc(pTW_IDENTITY pOrigin,pTW_IDENTITY pDest,
 {
 	if(IsValidDriver())
 	{
-	USHORT ret_val;
+		USHORT ret_val;
 		ret_val = (*m_pDSMProc)(pOrigin,pDest,DG,DAT,MSG,pData);
 		m_returnCode = ret_val;
 		if(ret_val == TWRC_FAILURE)
@@ -133,8 +132,7 @@ derived class
 void CTwain::GetIdentity()
 {
 	// Expects all the fields in m_AppId to be set except for the id field.
-	m_AppId.Id = 0; // Initialize to 0 (Source Manager
-	// will assign real value)
+	m_AppId.Id = 0; // Initialize to 0 (Source Manager will assign real value)
 	m_AppId.Version.MajorNum = 3; //Your app's version number
 	m_AppId.Version.MinorNum = 5;
 	m_AppId.Version.Language = TWLG_USA;
@@ -146,7 +144,6 @@ void CTwain::GetIdentity()
 	strcpy_s (m_AppId.Manufacturer, "MICSS");
 	strcpy_s (m_AppId.ProductFamily, "Generic");
 	strcpy_s (m_AppId.ProductName, "Twain Test");
-
 }
 
 
@@ -158,7 +155,6 @@ it is not yet supportted by CTwain.
 */
 bool CTwain::SelectSource()
 {
-
 	memset(&m_Source,0,sizeof(m_Source));
 	if(!SourceSelected())
 	{
@@ -211,7 +207,7 @@ Returns true if the Data Source Manager is Open
 */
 bool CTwain::DSMOpen() const
 {
-   qWarning("DSMOpen");
+   	//qWarning("DSMOpen");
 	return IsValidDriver() && m_bDSMOpen;
 	
 }
@@ -220,7 +216,8 @@ bool CTwain::DSMOpen() const
 Returns true if the Data Source is Open
 */
 bool CTwain::DSOpen() const
-{  qWarning("DSOpen");
+{  	
+	//qWarning("DSOpen");
 	return IsValidDriver() && DSMOpen() && m_bDSOpen;
 }
 
@@ -232,14 +229,14 @@ bool CTwain::OpenSource(TW_IDENTITY *pSource)
 	if(pSource) 
 	{
 		m_Source = *pSource;
-		qWarning("OpenSource - pSource");
+		//qWarning("OpenSource - pSource");
 	}
 	if(DSMOpen())
 	{
-	  qWarning("OpenSource - DSMOpen");
+	  	//qWarning("OpenSource - DSMOpen");
 		if(!SourceSelected())
 		{
-		qWarning("OpenSource - SourceSelected");
+			//qWarning("OpenSource - SourceSelected");
 			SelectDefaultSource();
 		}
 		m_bDSOpen = CallTwainProc(&m_AppId,NULL,DG_CONTROL,DAT_IDENTITY,MSG_OPENDS,(TW_MEMREF)&m_Source);
@@ -253,12 +250,12 @@ it will not process the message unless a scan is in progress.
 */
 bool CTwain::ProcessMessage(MSG msg)
 {
- qWarning("ProcessMessage");
+ 	//qWarning("ProcessMessage");
 	if(SourceEnabled())
 	{
-	TW_UINT16  twRC = TWRC_NOTDSEVENT;
+		TW_UINT16  twRC = TWRC_NOTDSEVENT;
 
-	TW_EVENT twEvent;
+		TW_EVENT twEvent;
 		twEvent.pEvent = (TW_MEMREF)&msg;
 		//memset(&twEvent, 0, sizeof(TW_EVENT));
 
@@ -271,7 +268,6 @@ bool CTwain::ProcessMessage(MSG msg)
 		}
 		//return false;
 		return (twRC==TWRC_DSEVENT);  
-
 	}
 	return false;
 }
@@ -300,10 +296,10 @@ Queries the capability of the Twain Data Source
 */
 bool CTwain::GetCapability(TW_UINT16 cap,TW_UINT32& value)
 {
-TW_CAPABILITY twCap;
+	TW_CAPABILITY twCap;
 	if(GetCapability(twCap,cap))
 	{
-	pTW_ONEVALUE pVal;
+		pTW_ONEVALUE pVal;
 		pVal = (pTW_ONEVALUE )GlobalLock(twCap.hContainer);
 		if(pVal)
 		{
@@ -324,9 +320,9 @@ bool CTwain::SetCapability(TW_UINT16 cap,TW_UINT16 value,bool sign)
 {
 	if(DSOpen())
 	{
-	TW_CAPABILITY twCap;
-	pTW_ONEVALUE pVal;
-	bool ret_value = false;
+		TW_CAPABILITY twCap;
+		pTW_ONEVALUE pVal;
+		bool ret_value = false;
 
 		twCap.Cap = cap;
 		twCap.ConType = TWON_ONEVALUE;
@@ -372,7 +368,7 @@ bool CTwain::SetImageCount(TW_INT16 nCount)
 	{
 		if(GetRC() == TWRC_CHECKSTATUS)
 		{
-		TW_UINT32 count;
+			TW_UINT32 count;
 			if(GetCapability(CAP_XFERCOUNT,count))
 			{
 				nCount = (TW_INT16)count;
@@ -395,13 +391,13 @@ bool CTwain::EnableSource(bool showUI)
 {
 	if(DSOpen() && !SourceEnabled())
 	{
-		qWarning("EnableSource - DSOpen et SourceEnabled");
+		//qWarning("EnableSource - DSOpen et SourceEnabled");
 		TW_USERINTERFACE twUI;
 		twUI.ShowUI = showUI;
 		twUI.hParent = (TW_HANDLE)m_hMessageWnd;
 		if(CallTwainProc(&m_AppId,&m_Source,DG_CONTROL,DAT_USERINTERFACE,MSG_ENABLEDS,(TW_MEMREF)&twUI))
 		{
-		 qWarning("EnableSource - CallTwainProc");
+		 	//qWarning("EnableSource - CallTwainProc");
 			m_bSourceEnabled = true;
 			m_bModalUI = twUI.ModalUI;
 		}
@@ -424,21 +420,23 @@ bool CTwain::Acquire(int numImages)
 {
 	if(DSOpen() || OpenSource())
 	{
-	qWarning("1!");
+		//qWarning("1!");
 		if(SetImageCount(numImages))
 		{
-		qWarning("2!");
+			//qWarning("2!");
 			if(EnableSource())
 			{
-			qWarning("3!");
-			//ReleaseTwain();
-			//TW_IMAGEINFO info;
-			//GetImageInfo(info);
-			// GetImage(info);
+				//qWarning("3!");
+				//ReleaseTwain();
+				//TW_IMAGEINFO info;
+				//GetImageInfo(info);
+				// GetImage(info);
 				return true;
 			}
 		}
 	}
+	EndTransfer();		//add 2013-12-13
+	CloseDS();			//add 2013-12-13
 	return false;
 }
 
@@ -449,7 +447,7 @@ bool CTwain::DisableSource()
 {
 	if(SourceEnabled())
 	{
-	TW_USERINTERFACE twUI;
+		TW_USERINTERFACE twUI;
 		if(CallTwainProc(&m_AppId,&m_Source,DG_CONTROL,DAT_USERINTERFACE,MSG_DISABLEDS,&twUI))
 		{
 			m_bSourceEnabled = false;
@@ -468,14 +466,14 @@ void CTwain::TranslateMessage(TW_EVENT& twEvent)
 	{
 	case MSG_XFERREADY:
 			TransferImage();
-			qWarning("translate1");
+			//qWarning("translate1");
 			break;
 	case MSG_CLOSEDSREQ:
 			if(CanClose())
 			{
 				CloseDS();
 			}
-			qWarning("translate2");
+			//qWarning("translate2");
 			break;
 	}
 }
@@ -498,8 +496,8 @@ TWAIN system
 */
 void CTwain::TransferImage()
 {
-TW_IMAGEINFO info;
-bool bContinue=true;
+	TW_IMAGEINFO info;
+	bool bContinue=true;
 	while(bContinue)
 	{
 		if(GetImageInfo(info))
@@ -510,18 +508,18 @@ bool bContinue=true;
 			{
 			case TWCPP_CANCELTHIS:
 					bContinue=EndTransfer();
-					qWarning("endhhhhhhhhhhh");
+					//qWarning("endhhhhhhhhhhh");
 					break;
 					
 			case TWCPP_CANCELALL:
 					CancelTransfer();
 					bContinue=false;
-					qWarning("endalllllllllhhhhhhhhhhh");
+					//qWarning("endalllllllllhhhhhhhhhhh");
 					break;
 					
 			case TWCPP_DOTRANSFER:
-			qWarning("dohhhhhhhhhhhhhhhhhhhh");
-					bContinue=GetImage(info);
+					//qWarning("dohhhhhhhhhhhhhhhhhhhh");
+					bContinue = GetImage(info);
 					break;
 			}
 		}
@@ -534,7 +532,7 @@ Returns true if the more images are pending
 */
 bool CTwain::EndTransfer()
 {
-TW_PENDINGXFERS twPend;
+	TW_PENDINGXFERS twPend;
 	if(CallTwainProc(&m_AppId,&m_Source,DG_CONTROL,DAT_PENDINGXFERS,MSG_ENDXFER,(TW_MEMREF)&twPend))
 	{
 		return twPend.Count != 0;
@@ -547,7 +545,7 @@ Aborts all transfers
 */
 void CTwain::CancelTransfer()
 {
-TW_PENDINGXFERS twPend;
+	TW_PENDINGXFERS twPend;
 	CallTwainProc(&m_AppId,&m_Source,DG_CONTROL,DAT_PENDINGXFERS,MSG_RESET,(TW_MEMREF)&twPend);
 }
 
@@ -556,9 +554,9 @@ Calls TWAIN to actually get the image
 */
 bool CTwain::GetImage(TW_IMAGEINFO& info)
 {
-HANDLE hBitmap;
+	HANDLE hBitmap;
 	CallTwainProc(&m_AppId,&m_Source,DG_IMAGE,DAT_IMAGENATIVEXFER,MSG_GET,&hBitmap);
-	qWarning("calltwain");
+	//qWarning("calltwain");
 	switch(m_returnCode)
 	{
 	case TWRC_XFERDONE:

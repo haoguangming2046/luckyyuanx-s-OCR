@@ -239,6 +239,7 @@ void ImageWidget::mousePressEvent(QMouseEvent *event)
 	{
 		mDrawMesureLines = true;
 		mCurrentMousePos = event->pos();
+		mTempPos = QPoint(event->pos().x() - mImagePadding, event->y() - mImagePadding);
 
 		if(mImage && mEnableMasks && mCurrentMask == NULL)
 		{
@@ -316,8 +317,8 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *event)
 	{
 		mCurrentMousePos = event->pos();
 
-		if(mImage && mEnableMasks && mCurrentMask)
-		{
+		//if(mImage && mEnableMasks && mCurrentMask)
+		
 			if(mCurrentMousePos.x() >= mImage->width() + mImagePadding)
 			{
 				mCurrentMousePos.setX(mImage->width() + mImagePadding - 1);
@@ -336,7 +337,7 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *event)
 			}
 
 			QPoint lastCorner(mCurrentMousePos.x() - mImagePadding, mCurrentMousePos.y() - mImagePadding);
-
+			
 			if(mCurrentMask)
 			{
 				mCurrentMask->rect.x = (mFirstCorner.x() < lastCorner.x() ? mFirstCorner.x() : lastCorner.x());
@@ -345,8 +346,17 @@ void ImageWidget::mouseMoveEvent(QMouseEvent *event)
 				mCurrentMask->rect.height = (mFirstCorner.y() > lastCorner.y() ? mFirstCorner.y() : lastCorner.y()) - mCurrentMask->rect.y;
 			}
 
+		
+		//add by yw
+		int widthadd = lastCorner.x() - mTempPos.x();
+		int heightadd = lastCorner.y() - mTempPos.y();
+		mTempPos = lastCorner;
+		for(int i = 0; i < mMasks->size(); i ++)
+		{
+				mMasks->at(i).rect.x += widthadd;
+				mMasks->at(i).rect.y += heightadd;
 		}
-
+		//add end
 		update();
 	}
 }

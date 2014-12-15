@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 
+//Image parameters for processing
 typedef struct ImageProcessParam
 {
 	bool debug;
@@ -42,6 +43,8 @@ typedef struct ImageProcessParam
 }
 ImageProcessParam;
 
+
+//preprocess the input image
 class ImageProcess
 {
 public:

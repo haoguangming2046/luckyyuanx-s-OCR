@@ -27,12 +27,18 @@ const std::string& AppInfo::appPath()
 	return mAppPath;
 }
 
+/**
+ * 返回绝对路径
+ */
 std::string AppInfo::appDir()
 {
 	QFileInfo fileInfo(QString::fromLocal8Bit(mAppPath.c_str()));
 	return fileInfo.dir().absolutePath().toLocal8Bit().constData();
 }
 
+/**
+ * 将本地字符串转换成UTF8格式
+ */
 std::string AppInfo::toUTF8(std::string localString )
 {
 	QString locatText = QString::fromLocal8Bit(localString.c_str());
@@ -40,6 +46,9 @@ std::string AppInfo::toUTF8(std::string localString )
 	return unicodeString;
 }
 
+/**
+ * 将UTF8格式字符串转换成本地格式
+ */
 std::string AppInfo::fromUTF8( std::string unicodeString )
 {
 	QString unicodeText = QString::fromStdString(unicodeString);

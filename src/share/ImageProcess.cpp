@@ -3,6 +3,7 @@
 #define min3v(v1, v2, v3)   ((v1)>(v2)? ((v2)>(v3)?(v3):(v2)):((v1)>(v3)?(v3):(v2)))
 #define max3v(v1, v2, v3)   ((v1)<(v2)? ((v2)<(v3)?(v3):(v2)):((v1)<(v3)?(v3):(v1)))
 
+//construction
 ImageProcess::ImageProcess()
 {
 	mMasks = NULL;
@@ -10,6 +11,8 @@ ImageProcess::ImageProcess()
 	mProcessedImage = NULL;
 	mProcessed = false;
 }
+
+//destruction
 ImageProcess::~ImageProcess()
 {
 	if(mOriginalImage)
@@ -22,6 +25,7 @@ ImageProcess::~ImageProcess()
 	}
 }
 
+//get image from the input
 void ImageProcess::setImage( IplImage* image )
 {
 	if(mOriginalImage)
@@ -39,16 +43,23 @@ void ImageProcess::setImage( IplImage* image )
 	mProcessed = false;
 }
 
+
+//get the unchanged image
 IplImage* ImageProcess::getOriginalImage()
 {
 	return mOriginalImage;
 }
 
+
+//get processed image
 IplImage* ImageProcess::getProcessedImage()
 {
 	return mProcessedImage;
 }
 
+/**
+ * Ѱ�ҷ�Ʊ���м�ĺ���
+ */
 CvRect ImageProcess::findRedStampRect( IplImage* image, int minPixCount, int minPixStack, int minRowHitStack, int minRowMissStack )
 {
 	int top = 0;
@@ -59,7 +70,7 @@ CvRect ImageProcess::findRedStampRect( IplImage* image, int minPixCount, int min
 	int rowHitStack = 0;
 	int rowMissStack = 0;
 
-	for(int y=0; y<mProcessedImage->height; y++)
+	for(int y=0; y<mProcessedImage->height; ++y)
 	{
 
 		int pixCount = 0;
@@ -67,7 +78,7 @@ CvRect ImageProcess::findRedStampRect( IplImage* image, int minPixCount, int min
 		int rowLeft = 0;
 		int rowRight = 0;
 
-		for(int x=0; x<mProcessedImage->width; x++)
+		for(int x=0; x<mProcessedImage->width; ++x)
 		{
 			uchar* ptr = (uchar*)(mProcessedImage->imageData + y * mProcessedImage->widthStep + x * 3);
 
@@ -142,7 +153,9 @@ CvRect ImageProcess::findRedStampRect( IplImage* image, int minPixCount, int min
 	return cvRect(left, top, right - left, bottom - top);
 }
 
-
+/**
+ * ȷ����Ʊ������
+ */
 const CvRect& ImageProcess::findTableRect(const CvRect &redStampRect )
 {
 	CvRect tableRect;
@@ -340,7 +353,7 @@ int ImageProcess::run( ImageProcessParam* param )
 		IplImage* grayImage = cvCreateImage(cvGetSize(mProcessedImage), 8, 1);
 		IplImage* outImage = cvCreateImage(cvGetSize(mProcessedImage), 8, 3);
 
-		//灰度化
+		//�ҶȻ�
 		if(param->gray)
 		{
 			cvCvtColor(mProcessedImage, grayImage, CV_RGB2GRAY);
@@ -350,7 +363,7 @@ int ImageProcess::run( ImageProcessParam* param )
 			}
 		}
 		
-		//二值化
+		//��ֵ��
 		if(param->threshold && param->gray)
 		{
 			if( param->thresholdBlockSize % 2 == 0)
@@ -365,7 +378,7 @@ int ImageProcess::run( ImageProcessParam* param )
 		}
 		
 
-		//霍夫变换
+		//���任
 		CvSeq* lines = NULL;
 		if(param->hough && param->threshold && param->gray)
 		{
@@ -388,7 +401,7 @@ int ImageProcess::run( ImageProcessParam* param )
 			}
 		}
 
-		//寻找角点
+		//Ѱ�ҽǵ�
 		if(param->corner && param->hough && param->threshold && param->gray)
 		{
 			CvPoint point;
@@ -397,7 +410,6 @@ int ImageProcess::run( ImageProcessParam* param )
 				cornerPoints[i] = new CvPoint;
 				cornerPoints[i]->x = point.x;
 				cornerPoints[i]->y = point.y;
-
 
 				if(param->debug)
 				{
@@ -551,7 +563,9 @@ void ImageProcess::normalize( ImageProcessParam* param, CvPoint** cornerPoints)
 	cvGetPerspectiveTransform(src, dst, warp_mat);
 
 	cvReleaseImage(&mProcessedImage);
-	mProcessedImage = cvCreateImage(cvSize(param->normalizeWidth + param->normalizeSideMargin * 2, param->normalizeTopMargin + param->normalizeSideMargin + param->normalizeHeight), 8, 3);
+	mProcessedImage = cvCreateImage(cvSize(param->normalizeWidth 
+		+ param->normalizeSideMargin * 2, param->normalizeTopMargin 
+		+ param->normalizeSideMargin + param->normalizeHeight), 8, 3);
 	cvWarpPerspective(mOriginalImage, mProcessedImage, warp_mat);
 }
 

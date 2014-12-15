@@ -25,11 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "dib.h"
 #include "qtwain.h"
 
-
-
-
-
-
 QTwain::QTwain(QWidget* parent)
 	: QTwainInterface(parent), CTwain()
 {	
@@ -57,8 +52,7 @@ bool QTwain::acquire(unsigned int maxNumImages)
 	unsigned int nMaxNum = 1;
 
 	if (maxNumImages == UINT_MAX)
-		nMaxNum = TWCPP_ANYCOUNT;
-		
+		nMaxNum = TWCPP_ANYCOUNT;		
 
 	return (Acquire(nMaxNum) == true);
 } // !acquire()
@@ -95,8 +89,6 @@ void QTwain::CopyImage(HANDLE hBitmap, TW_IMAGEINFO& info)
 	}
 } // !CopyImage()
 
-
-
 bool QTwain::processMessage(MSG& msg)
 {
 	if (msg.message == 528) // don't really know why...
@@ -106,8 +98,6 @@ bool QTwain::processMessage(MSG& msg)
 		return false;
 	return (ProcessMessage(msg) == true);
 } // !processMessage()
-
-
 
 static unsigned char masktable[] = { 0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01 };
 

@@ -18,6 +18,8 @@ float LineSegment::minValue(float a, float b)
 	return a<b?a:b;
 }
 
+
+//detect the cross point of 2 lines
 bool LineSegment::cross(const LineSegment& lineSeg, CvPoint* crossPoint, int degree, int gap)
 {
 	float len1 = distance(point[0], point[1]);

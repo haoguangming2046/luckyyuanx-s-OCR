@@ -54,11 +54,16 @@ void TesseractOCR::setImage( IplImage* image )
 	tessBaseAPI->SetImage((uchar*)image->imageData, image->width, image->height, image->nChannels, image->widthStep);
 }
 
+/**
+ * ����ģ��
+ */
 void TesseractOCR::setMasks( std::vector<OCRMask>* masks )
 {
 	mMasks = masks;
 }
 
+
+//get text from the processed image
 std::string TesseractOCR::recognizeText()
 {
 	std::string allText;
@@ -91,6 +96,12 @@ std::string TesseractOCR::recognizeText()
 				std::string unicodeText = AppInfo::instance()->toUTF8(localText);
 				tessBaseAPI->SetVariable("tessedit_char_whitelist", unicodeText.c_str());
 			}
+			else if(mask.key == "年" || mask.key == "月" || mask.key == "日")
+			{
+					std::string localText = "0123456789";
+					std::string unicodeText = AppInfo::instance()->toUTF8(localText);
+					tessBaseAPI->SetVariable("tessedit_char_whitelist", unicodeText.c_str());
+			}
 			else
 			{
 				tessBaseAPI->SetVariable("tessedit_char_whitelist", "");
@@ -120,8 +131,7 @@ std::string TesseractOCR::recognizeText()
 					if( start!= -1 && end != -1 )
 					{
 						value = value.substr(start + 1, end - start);
-					}
-					
+					}					
 				}
 				else if(mask.key == "发票代码"|| mask.key == "发票号码")
 				{

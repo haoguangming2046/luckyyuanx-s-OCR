@@ -22,8 +22,6 @@ public:
 
 protected:
 	void paintEvent(QPaintEvent *event);
-
-
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -57,6 +55,7 @@ private:
 	bool mDrawMesureLines;
 	QPoint mCurrentMousePos;
 	QPoint mFirstCorner;
+	QPoint mTempPos;
 
 	bool mEnableMasks;
 	std::vector<OCRMask>* mMasks;

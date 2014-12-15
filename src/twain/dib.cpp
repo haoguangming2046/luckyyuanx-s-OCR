@@ -2,8 +2,6 @@
 #include "dib.h"
 #include <stdlib.h>
 
-
-
 #define BIG_DISTANCE 10000000L
 
 #define DIST(r1,g1,b1,r2,g2,b2) \
@@ -13,8 +11,6 @@
 
 
 static unsigned char masktable[] = { 0x80,0x40,0x20,0x10,0x08,0x04,0x02,0x01 };
-
-
 
 CDIB::CDIB(HANDLE hDib,int nBits)
 {

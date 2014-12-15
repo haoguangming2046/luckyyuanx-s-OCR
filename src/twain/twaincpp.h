@@ -3,7 +3,6 @@
 
 #include "twain.h"
 
-
 #define TWCPP_ANYCOUNT		(-1)
 #define TWCPP_CANCELTHIS	(1)
 #define TWCPP_CANCELALL		(2)
@@ -12,13 +11,10 @@
 class CTwain
 {
 public:
-
-
 	CTwain(HWND hWnd = NULL);
 	virtual ~CTwain();
 	bool InitTwain(HWND hWnd);
 	void ReleaseTwain();
-
 
 	/*  
 	  This routine must be implemented by the dervied class 
@@ -93,6 +89,5 @@ protected:
 
 	int m_nImageCount;
 };
-
 
 #endif

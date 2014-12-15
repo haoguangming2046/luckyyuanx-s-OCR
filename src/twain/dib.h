@@ -1,9 +1,7 @@
 #ifndef _DIB_H_
 #define _DIB_H_
 
-
 #include "twain.h"
-
 
 class CDIB 
 {
@@ -72,6 +70,5 @@ protected :
 	RGBQUAD CacheQuad[256];
 	char CachePtr[256];
 };
-
 
 #endif // !_DIB_H_

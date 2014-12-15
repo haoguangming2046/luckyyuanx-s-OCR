@@ -1,17 +1,16 @@
-#include <QApplication>
-#include <QtCore/QtCore>
+
+#include <QtGui/QApplication>
+#include <QTextCodec>
 #include "MainWindow.h"
-#include "Share/AppInfo.h"
 
-int main(int argc, char** argv)
+int main(int argc, char *argv[])
 {
-	QApplication app(argc, argv);
-
+	QApplication a(argc, argv);
+	//解决中文乱码
 	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-	AppInfo::instance()->setAppPath(argv[0]);
-
-	MainWindow mainWindow;
-	mainWindow.show();
-	
-	return app.exec();
+	QTextCodec::setCodecForTr(QTextCodec::codecForName("System"));
+	//QTextCodec::setCodecForCStrings(QTextCodec::codecForName("System"));
+	 MainWindow main;
+	main.show();
+	return a.exec();
 }
